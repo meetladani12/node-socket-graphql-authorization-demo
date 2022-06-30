@@ -41,16 +41,18 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io();
+    var socket = io("http://localhost:5000/signup");
     $('#register').submit(function (e) {
         e.preventDefault();
         let data = { email: $('#email').val(), password: $('#password').val() };
         socket.emit('login', data);
     });
-    socket.on('register_response', function (data) {
+    socket.on('login_response', function (data) {
         console.log(data);
         if (data.status == true) {
-            alert('User registered Successfully.');
+            localStorage.setItem('token',data.data.token);
+            alert('User logged in Successfully.');
+            window.location.href = '/';
         } else {
             alert('Something went wrong.');
         }

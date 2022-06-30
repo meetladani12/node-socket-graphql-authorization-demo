@@ -1,11 +1,12 @@
 const express = require('express');
+require('dotenv').config();
 require('./mongooseDb');
 const app2 = express();
-const Sockets = require("./Socket/sockets");
+const Sockets = require("./app/Socket/sockets");
 const http = require('http');
 const server2  = http.createServer(app2);
 const WebSocket = require("socket.io").Server;
-const schema = require('./Schema/chatHistorySchema');
+const schema = require('./app/Schema/chatHistorySchema');
 const bodyParser = require('body-parser');
 const { ApolloServer } = require('apollo-server-express');
 const cors = require('cors');
@@ -25,7 +26,6 @@ async function startApolloServer(){
     server.applyMiddleware({ app });
     app.listen({ port: 3000 }, () =>
     console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`));
-    Sockets(io);
 }
 app2.use(cors());
 app2.get('/', (req, res) => {
@@ -40,4 +40,5 @@ app2.get('/register', (req, res) => {
 server2.listen(5000, () => {
     console.log('listening on *:5000');
 });
+Sockets(io);
 startApolloServer();

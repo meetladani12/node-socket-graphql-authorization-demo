@@ -18,7 +18,8 @@ const typeDefs = gql `
     }
 
     type Query{
-        getConversation(sender: String!): [ChatHistory]
+        getConversation(sender: String!, receiver: String!): [ChatHistory]
+        getUsers(id: ID!): [User]
     }
 
     type Mutation{
@@ -29,8 +30,24 @@ const typeDefs = gql `
 const resolver = {
     Query : {
         getConversation : async (req, args) =>{
-            let history = await ChatHistory.find({})
+            let history = await ChatHistory.find({
+                $or: [
+                        { $and: [ 
+                            { "sender": args.sender },
+                        { "receiver": args.receiver } 
+                        ] },
+                            { $and: [ { "receiver": args.sender },
+                            { "sender": args.receiver }
+                        ] }
+                    ]
+                })
             return history;
+        },
+        getUsers: async(req, args)=>{
+            let users = await User.find({
+                _id : {$ne : args.id} 
+            });
+            return users;
         }
     },
     Mutation : {

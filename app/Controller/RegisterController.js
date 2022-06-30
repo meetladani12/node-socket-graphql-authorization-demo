@@ -2,6 +2,7 @@ const axios = require('axios');
 const User = require('../Models/User').User;
 const bcrypt = require('bcryptjs');
 let _ = require('underscore');
+const Helper = require('../Helper/helper');
 module.exports = {
     chatHistory: (req) => {
         let data = JSON.stringify({
@@ -86,14 +87,13 @@ module.exports = {
             };
         } else {
             if(await bcrypt.compare(password, userCheck.password)){
-                console.log(1);
                 userCheck.token = '';
                 userCheck.updateAt = new Date();
                 userCheck.token = Helper.dataEncrypt(JSON.stringify(userCheck));
-                await (userCheck.save());
+                await userCheck.save();
                 return {
                     "status": true,
-                    "data": [],
+                    "data": userCheck,
                     "message": "Logged in successfully."
                 };
             }else{
@@ -105,9 +105,6 @@ module.exports = {
                 };
             }
         }
-        // if(userCheck){
-
-        // }
     }
 
 
